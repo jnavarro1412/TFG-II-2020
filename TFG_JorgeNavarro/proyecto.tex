@@ -185,16 +185,14 @@ pdfproducer = {pdflatex}
 % Introduccion
 \input{capitulos/01_Introduccion}
 
-% Descripción del problema
-\input{capitulos/02_Descripcion}
-
 % Estado del arte
-% 	1. Crítica al estado del arte
-% 	2. Propuesta
-\input{capitulos/03_EstadoDelArte}
+%   1. Trastornos del aprendizaje
+% 	2. Crítica al estado del arte
+% 	3. Propuesta
+\input{capitulos/02_EstadoDelArte}
 
 % Materiales y métodos
-\input{capitulos/04_MaterialesMetodos}
+\input{capitulos/03_MaterialesMetodos}
 
 
 % Desarrollo del proyecto
@@ -202,33 +200,30 @@ pdfproducer = {pdflatex}
 %   2. Control de versiones
 %   3. Hardware
 %   4. Software
-\input{capitulos/05_Desarrollo}
+\input{capitulos/04_Desarrollo}
 
 % Resultados
-\input{capitulos/06_Resultados}
+\input{capitulos/05_Resultados}
 
 % Planificación y recursos
-\input{capitulos/07_PlanificacionRecursos}
+\input{capitulos/06_PlanificacionRecursos}
 
 % Conclusiones
-\input{capitulos/08_Conclusiones}
+\input{capitulos/07_Conclusiones}
 
 % Ampliaciones y mejoras
-\input{capitulos/09_Ampliaciones}
+\input{capitulos/08_Ampliaciones}
 
+\input{capitulos/eleccion_dms}
 
-%
-%%\nocite{*}
-%\bibliography{bibliografia/bibliografia}\addcontentsline{toc}{chapter}{Bibliografía}
-%\bibliographystyle{miunsrturl}
-%
-%\appendix
-%\input{apendices/manual_usuario/manual_usuario}
-%%\input{apendices/paper/paper}
-%\input{glosario/entradas_glosario}
-% \addcontentsline{toc}{chapter}{Glosario}
-% \printglossary
-\chapter*{}
+\begin{thebibliography}{0}
+  \bibitem{Asandis} Asociación Andaluza de Dislexia: Guía general sobre dislexia 2010
+  \bibitem{LaDislexia} http://www.ladislexia.net/causas-etiologia/
+  \bibitem{WebConsultas} https://www.webconsultas.com/dislexia/tipos-de-dislexia-752
+  \bibitem{GitDislexia} Victor Widell. Dsxyliea: https://geon.github.io/programming/2016/03/03/dsxyliea
+  \bibitem{GitProyecto} https://github.com/jnavarro1412/TFG-II-2020
+\end{thebibliography}
+
 \thispagestyle{empty}
 
 \end{document}
