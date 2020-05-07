@@ -1,61 +1,99 @@
 // Nombre: TFG_II_2020.ino 
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 07/04/2020
-// Versión: 1.1
-// Descripcion: Este fichero implementa un juego Arduino para corrección de la dislexia 
-//              mediante aprendizaje por repeticion de los cuatro puntos cardinales
+// Fecha: 07/05/2020
+// Versión: 1.2
+// Descripcion: Este fichero implementa un programa que define un sistema para 
+//              proporcionar herramientas de ayuda al tratamiento de la dislexia
 
 // Bibliotecas incluidas en el proyecto
-#include<stdlib.h>
-#include<LiquidCrystal.h>
+#include <stdlib.h>
+#include <LiquidCrystal.h>
+#include <Key.h>
+#include <Keypad.h>
 
-// Definicion de los LEDs según su orientación
-#define LED_UP
-#define LED_DOWN
-#define LED_RIGHT
-#define LED_LEFT
+// Definición de los pulsadores direccionales
+#define BUTTON_UP 2
+#define BUTTON_DOWN 3
+#define BUTTON_RIGHT 4
+#define BUTTON_LEFT 5
 
-// Definicion de los LEDs de comprobación
-#define LED_RED
-#define LED_GREEN
+// Inicialización de la pantalla LCD con los pines asignados
+LiquidCrystal lcd(6, 7, 8, 9, 10, 11);
 
-// Definición de los botones asociados a los LEDs
-#define BUTTON_UP
-#define BUTTON_DOWN
-#define BUTTON_RIGHT
-#define BUTTON_LEFT
+// Inicialización del teclado matricial 4x4
+const byte COLUMNAS = 4;  // Cuatro columnas
+const byte FILAS = 4;     // Cuatro filas
 
-// Definición de los rangos de pin para asignar las luces
-#define MIN_PIN
-#define MAX_PIN
+char teclas[FILAS][COLUMNAS] = {
+  {'1','2','3','A'},
+  {'4','5','6','B'},
+  {'7','8','9','C'},
+  {'*','0','#','D'}
+};
 
-// Variables 
-int nuevoPin = 0;
-int lastPin = 0;
-int value = 0;
+byte pinesFila[FILAS] = {46, 47, 48, 49};
+byte pinesColumna[COLUMNAS] = {50, 51, 52, 53};
+
+Keypad teclado = Keypad(makeKeymap(teclas), pinesFila, pinesColumna, FILAS, COLUMNAS); 
+
+// Variables globales
+
 
 // Nombre: setup 
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 07/04/2020
-// Versión: 1.1
-// Descripcion: Configuración general inicial
+// Fecha: 07/05/2020
+// Versión: 1.2
+// Descripcion: Configuración inicial de la tarjeta Arduino
 void setup(){
-    // Inicializar la placa Arduino 
-    inicializarArduino();
-
-    // Inicializar la pantalla LCD1602
-    inicializarPantalla();
+    // Configuración inicial de los pines de los Botones (INPUT)
+    pinMode(BUTTON_UP, INPUT);
+    pinMode(BUTTON_DOWN, INPUT);
+    pinMode(BUTTON_RIGHT, INPUT);
+    pinMode(BUTTON_LEFT, INPUT);
     
-    // Configuración inicial del estado de los leds (apagados)
-    digitalWrite(LED_UP, LOW);
-    digitalWrite(LED_DOWN, LOW);
-    digitalWrite(LED_RIGHT, LOW);
-    digitalWrite(LED_LEFT, LOW);
-    digitalWrite(LED_RED, LOW);
-    digitalWrite(LED_GREEN, LOW);
+    // Configuración de columnas y filas del LCD 
+    lcd.begin(16, 2);
+   
 }
 
-void loop(){}
+// Nombre: loop
+// Autor: Jorge Navarro Ordoñez
+// Fecha: 07/05/2020
+// Versión: 1.1
+// Descripcion: Programa principal del sistema (se ejecuta infinitamente)
+void loop(){
+    // Pantalla de inicio
+
+    // Leer de teclado (seleccionar modo de juego)
+
+    // Iniciar juego
+
+
+}
+
+void juegoDispraxia(){
+    // Genera una direccion aleatoria
+
+    // Lee la respuesta del teclado
+
+    // Si es correcta, vuelve de nuevo
+    // Si es incorrecta, espera por un nuevo intento
+}
+
+void juegoDiscalculia(){
+    // Genera dos números aleatorios
+
+    // Calcula el resultado de la operacion
+
+    // Lee la respuesta del teclado
+
+    // Si es correcta, vuelve de nuevo
+    // Si es incorrecto, espera por un nuevo intento
+}
+
+
+
+
 
 // Nombre: generarNumAleatorio
 // Autor: Jorge Navarro Ordoñez
@@ -66,55 +104,4 @@ int generarNumAleatorio(int Inf, int Sup){
     int num = 0;  
     num = Inf + (int)(((Sup - Inf + 1.0) * rand()) / (RAND_MAX + 1.0)); 
     return num;
-}
-
-// Nombre: inicializarArduino
-// Autor: Jorge Navarro Ordoñez
-// Fecha: 07/04/2020
-// Versión: 1.0
-// Descripcion: Inicialización de la placa Arduino MEGA 2560
-void inicializarArduino(){
-    // Configuración de los pines de los LEDs (OUTPUT)
-    pinMode(LED_UP, OUTPUT);
-    pinMode(LED_DOWN, OUTPUT);
-    pinMode(LED_RIGHT, OUTPUT);
-    pinMode(LED_LEFT, OUTPUT);
-    pinMode(LED_RED, OUTPUT);
-    pinMode(LED_GREEN, OUTPUT);
-  
-    // Configuración de los pines de los Botones (INPUT)
-    pinMode(BUTTON_UP, INPUT);
-    pinMode(BUTTON_DOWN, INPUT);
-    pinMode(BUTTON_RIGHT, INPUT);
-    pinMode(BUTTON_LEFT, INPUT);
-}
-
-// Nombre: inicializarPantalla
-// Autor: Jorge Navarro Ordoñez
-// Fecha: 07/04/2020
-// Versión: 1.0
-// Descripcion: inicializa la pantalla LCD1602
-void inicializarPantalla(){
-    // Configura el numero de columnas y filas del LCD
-    lcd.begin(16, 2);
-    // Indica la posicion del cursor (Columna 0, Linea 0)
-    lcd.setCursor(0, 0);
-    // Muestra mensaje de inicio por el LCD
-    lcd.print("BIENVENIDO");
-    // Indica la posicion del cursor (Columna 0, Linea 1)
-    lcd.setCursor(0, 1);
-    // Shows start message on LCD
-    lcd.print("WELCOME");
-}
-
-// Nombre: actualizarPantalla
-// Autor: Jorge Navarro Ordoñez
-// Fecha: 07/04/2020
-// Versión: 1.0
-// Descripcion: actualiza la información mostrada por pantalla LCD1602
-void actualizarPantalla(int pos){
-    // Indica la posicion del cursor (Columna 0, Linea 0)
-    lcd.setCursor(0, 0);
-
-    // Según el número generado muestra la dirección correspondiente 
 }
