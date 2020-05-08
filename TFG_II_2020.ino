@@ -11,14 +11,8 @@
 #include <Key.h>
 #include <Keypad.h>
 
-// Definición de los pulsadores direccionales
-#define BUTTON_UP 2
-#define BUTTON_DOWN 3
-#define BUTTON_RIGHT 4
-#define BUTTON_LEFT 5
-
 // Inicialización de la pantalla LCD con los pines asignados
-LiquidCrystal lcd(6, 7, 8, 9, 10, 11);
+LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
 
 // Inicialización del teclado matricial 4x4
 const byte COLUMNAS = 4;  // Cuatro columnas
@@ -45,15 +39,10 @@ Keypad teclado = Keypad(makeKeymap(teclas), pinesFila, pinesColumna, FILAS, COLU
 // Versión: 1.2
 // Descripcion: Configuración inicial de la tarjeta Arduino
 void setup(){
-    // Configuración inicial de los pines de los Botones (INPUT)
-    pinMode(BUTTON_UP, INPUT);
-    pinMode(BUTTON_DOWN, INPUT);
-    pinMode(BUTTON_RIGHT, INPUT);
-    pinMode(BUTTON_LEFT, INPUT);
-    
     // Configuración de columnas y filas del LCD 
     lcd.begin(16, 2);
-   
+    // Print a message to the LCD.
+    lcd.print("NUEVO JUEGO");
 }
 
 // Nombre: loop
@@ -63,12 +52,10 @@ void setup(){
 // Descripcion: Programa principal del sistema (se ejecuta infinitamente)
 void loop(){
     // Pantalla de inicio
-
     // Leer de teclado (seleccionar modo de juego)
-
     // Iniciar juego
 
-
+    juegoDiscalculia();
 }
 
 void juegoDispraxia(){
@@ -81,14 +68,44 @@ void juegoDispraxia(){
 }
 
 void juegoDiscalculia(){
-    // Genera dos números aleatorios
-
-    // Calcula el resultado de la operacion
-
-    // Lee la respuesta del teclado
-
-    // Si es correcta, vuelve de nuevo
-    // Si es incorrecto, espera por un nuevo intento
+    lcd.setCursor(0,1);
+    bool siguiente = false;
+    bool acierto = false;
+    // Bucle para jugar
+    while(!siguiente){
+      // Genera dos números aleatorios
+      int n1 = generarNumAleatorio(0,50);
+      int n2 = generarNumAleatorio(0,50);
+      lcd.print(n1);
+      lcd.print("+");
+      lcd.print(n2);
+      lcd.print("=");
+      // Calcula el resultado de la operacion
+      int res = n1 + n2;
+      while(!acierto){
+        char customKey = teclado.waitForKey();
+        int num = String(customKey).toInt();
+        // Si es correcta, vuelve de nuevo
+        lcd.setCursor(4,1);
+        lcd.print(num);
+        if(num == res){
+          delay(500);
+          lcd.clear();
+          lcd.print("CORRECTO");
+          acierto = true;
+          siguiente = true;
+        }else{
+          delay(500);
+          lcd.clear();
+          lcd.print("INCORRECTO");
+          lcd.setCursor(0,1);
+          lcd.print(n1);
+          lcd.print("+");
+          lcd.print(n2);
+          lcd.print("=");
+        }
+      }
+    }
 }
 
 
