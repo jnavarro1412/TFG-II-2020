@@ -13,22 +13,30 @@
 #include <Key.h>
 #include <Keypad.h>
 
-#define CENTRO 0 
-#define ARRIBA 1
-#define ABAJO 2
-#define DERECHA 3
-#define IZQUIERDA 4
+// Define los puntos para la orientacion
+#define CENTRO           0 
+#define ARRIBA           1
+#define ARRIBA_DERECHA   2
+#define DERECHA          3
+#define ABAJO_DERECHA    4
+#define ABAJO            5
+#define ABAJO_IZQUIERDA  6
+#define IZQUIERDA        7
+#define ARRIBA_IZQUIERDA 8
 
-#define SUMA 0
-#define RESTA 1
+// Define operaciones matemáticas
+#define SUMA            0
+#define RESTA           1
+#define MULTIPLICACION  2
 
 // Inicialización de la pantalla LCD con los pines asignados
 LiquidCrystal lcd(6, 7, 8, 9, 10, 11);
 
 // Inicialización del teclado matricial 4x4
 const byte COLUMNAS = 4;  // Cuatro columnas
-const byte FILAS = 4;     // Cuatro filas
+const byte FILAS    = 4;  // Cuatro filas
 
+// Distribución de caracteres en las teclas 
 char teclas[FILAS][COLUMNAS] = {
   {'1','2','3','A'},
   {'4','5','6','B'},
@@ -36,27 +44,28 @@ char teclas[FILAS][COLUMNAS] = {
   {'*','0','#','D'}
 };
 
+// Inicialización de pines para Filas y Columnas
 byte pinesFila[FILAS] = {46, 47, 48, 49};
 byte pinesColumna[COLUMNAS] = {50, 51, 52, 53};
 
+// Instanciación del teclado
 Keypad teclado = Keypad(makeKeymap(teclas), pinesFila, pinesColumna, FILAS, COLUMNAS); 
 
 // Inicialización del joystick direccionable
-const int pinJoyX = A0;
-const int pinJoyY = A1;
+const int pinJoyX   = A0;
+const int pinJoyY   = A1;
 const int buttonJoy = 13;
 
 // Variables globales
-int Xvalue = 0;
-int Yvalue = 0;
-int direccion = 0;
-int respuesta = -1;
-int ronda = 0;
-bool pulsado = false;
-bool siguiente = false;
-bool acierto = false;
-
-int puntosTotal = 0;
+int   Xvalue      = 0;
+int   Yvalue      = 0;
+int   direccion   = 0;
+int   respuesta   = -1;
+int   ronda       = 0;
+bool  pulsado     = false;
+bool  siguiente   = false;
+bool  acierto     = false;
+int   puntosTotal = 0;
 
 // Nombre: setup 
 // Autor: Jorge Navarro Ordoñez
@@ -69,7 +78,7 @@ void setup(){
     // Configuración de la resistencia pull up del joystick
     pinMode(buttonJoy , INPUT_PULLUP);
     // Print a message to the LCD.
-    //lcd.print("NUEVO JUEGO");
+    lcd.print("NUEVO JUEGO");
 }
 
 // Nombre: loop
@@ -78,15 +87,16 @@ void setup(){
 // Versión: 1.2
 // Descripcion: Programa principal del sistema (se ejecuta infinitamente)
 void loop(){
+    delay(3000);
     // Pantalla de inicio
     mostarMenuInicial();
     // Leer de teclado (seleccionar modo de juego)
     char modoJuego = teclado.waitForKey();
-    // Iniciar juego
+    // Iniciar juego en función del juego seleccionado
     if(modoJuego == '1'){
-        juegoDispraxia();
+        juegoDispraxia();   // Inicia el juego para la Dispraxia
     } else if(modoJuego == '2'){
-        juegoDiscalculia();
+        juegoDiscalculia(); // Inicia el juego para la Discalculia
     }
 }
 
@@ -129,23 +139,34 @@ void juegoDispraxia(){
 
 // Nombre: juegoDiscalculia
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 11/05/2020
-// Versión: 1.3
+// Fecha: 24/05/2020
+// Versión: 1.4
 // Descripcion: función que define el juego contra la discalculia
 void juegoDiscalculia(){
     ronda = 0;
+    // 10 rondas de juego
     while(ronda < 10){
         int puntos = 10;
         siguiente = false;
         acierto = false;
         // Bucle para jugar
         while(!siguiente){
+            int n1 = 0;
+            int n2 = 0;
             char respuesta[] = {""};
-            // Genera dos números aleatorios
-            int n1 = generarNumAleatorio(20, 49);
-            int n2 = generarNumAleatorio(1, 19);
-            // Genera una operacion matemática (Suma - Resta)
-            int operacion = generarNumAleatorio(1, 10000) % 2;
+            // Genera una operacion matemática (Suma - Resta - Multiplicacion)
+            int operacion = generarNumAleatorio(1, 10000) % 3;
+            // Genera dos números aleatorios en función de la operacion
+            if(operacion == SUMA){
+                n1 = generarNumAleatorio(5, 25);
+                n2 = generarNumAleatorio(5, 25);
+            } else if(operacion == RESTA){
+                n1 = generarNumAleatorio(20, 49);
+                n2 = generarNumAleatorio(10, 39);
+            } else if(operacion == MULTIPLICACION){
+                n1 = generarNumAleatorio(1, 9);
+                n2 = generarNumAleatorio(1, 9);
+            }
             // Muestra la operación generada
             mostrarOperacion(n1, n2, operacion);
             // Calcula el resultado de la operacion
@@ -154,11 +175,22 @@ void juegoDiscalculia(){
             while(!acierto){
                 // Lee dos números del teclado y los muestra por la pantalla LCD
                 respuesta[0] = teclado.waitForKey();
-                lcd.setCursor(7,1);
-                lcd.print(respuesta[0]);
-                respuesta[1] = teclado.waitForKey();
-                lcd.setCursor(8,1);
-                lcd.print(respuesta[1]);
+                // Imprime la respuesta de la suma
+                if(operacion == SUMA || operacion == RESTA){
+                    lcd.setCursor(7,1);
+                    lcd.print(respuesta[0]);
+                    respuesta[1] = teclado.waitForKey();
+                    lcd.setCursor(8,1);
+                    lcd.print(respuesta[1]);
+                }
+                // Imprime la respuesta de la multiplicacion
+                else if(operacion == MULTIPLICACION){
+                    lcd.setCursor(5,1);
+                    lcd.print(respuesta[0]);
+                    respuesta[1] = teclado.waitForKey();
+                    lcd.setCursor(6,1);
+                    lcd.print(respuesta[1]);
+                }
                 // Convierte la respuesta en un numero entero
                 int num = String(respuesta).toInt();
                 // Comprueba si la respuesta coincide con la correcta
@@ -177,7 +209,12 @@ void juegoDiscalculia(){
                     ronda++;
                 } else{
                     delay(1000);
-                    lcd.setCursor(7,1);
+                    // Limpia la pantalla para dejar espacio a la nueva respuesta
+                    if(operacion == SUMA || operacion == RESTA){
+                        lcd.setCursor(7,1);
+                    } else if(operacion == MULTIPLICACION){
+                        lcd.setCursor(5,1);
+                    }
                     lcd.print("  ");
                     if(puntos > 0){
                         puntos -= 5;
@@ -228,61 +265,112 @@ int obtenerDireccion(int Xvalue, int Yvalue, bool pulsado){
 
 // Nombre: calcularOperacion
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 10/05/2020
-// Versión: 1.0
+// Fecha: 24/05/2020
+// Versión: 1.1
 // Descripcion: calcula el resultado de la operacion generada
 int calcularOperacion(int op1, int op2, int operacion){
+    // Calcula la suma
     if(operacion == SUMA){
         return (op1 + op2);
-    } else if(operacion == RESTA){
+    }
+    // Calcula la resta 
+    else if(operacion == RESTA){
         return (op1 - op2);
-    } else{
+    } 
+    // Calcula la multiplicacion
+    else if(operacion == MULTIPLICACION){
+        return (op1 * op2); 
+    }
+    // Devuelve -1 si la operacion no existe
+    else{
         return -1;
     }
 }
 
 // Nombre: mostrarOperacion
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 11/05/2020
-// Versión: 1.1
+// Fecha: 24/05/2020
+// Versión: 1.2
 // Descripcion: muestra por la pantalla LCD la operación generada
 void mostrarOperacion(int num1, int num2, int op){
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("CALCULAR");
     lcd.setCursor(0,1);
-    lcd.print(num1);
-    lcd.setCursor(2,1);
-    if(op == SUMA){
-        lcd.print("+");
-    } else if(op == RESTA){
-        lcd.print("-");
+    // Imprime las operaciones de suma y resta
+    if(op == SUMA || op == RESTA){
+        lcd.print(num1);
+        lcd.setCursor(2,1);
+        // Símbolo de la suma
+        if(op == SUMA){
+            lcd.print("+");
+        } 
+        // Símbolo de la resta
+        else if(op == RESTA){
+            lcd.print("-");
+        }
+        lcd.setCursor(3,1);
+        lcd.print(num2);
+        lcd.setCursor(5,1);
+        lcd.print("=");
     }
-    lcd.setCursor(3,1);
-    lcd.print(num2);
-    lcd.setCursor(5,1);
-    lcd.print("=");
+    // Imprime la operacion de multiplicación
+    else if(op == MULTIPLICACION){
+        lcd.print(num1);
+        lcd.setCursor(1,1);
+        // Símbolo de la multiplicación
+        lcd.print("x");
+        lcd.setCursor(2,1);
+        lcd.print(num2);
+        lcd.setCursor(4,1);
+        lcd.print("=");
+    }
 }
 
 // Nombre: mostrarDireccion
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 09/05/2020
-// Versión: 1.0
+// Fecha: 24/05/2020
+// Versión: 1.1
 // Descripcion: muestra por la pantalla LCD la direccion generada
 void mostrarDireccion(int direccion){
    lcd.clear();
    lcd.setCursor(0,0);
    lcd.print("ELIGE EL LADO");
    lcd.setCursor(0,1);
+   // Dirección: ARRIBA
    if(direccion == ARRIBA){
       lcd.print("ARRIBA");
-   } else if(direccion == ABAJO){
-      lcd.print("ABAJO");
-   } else if(direccion == DERECHA){
+   }
+   // Dirección: ARRIBA DERECHA
+   else if(direccion == ARRIBA_DERECHA){
+      lcd.print("ARRIBA DERECHA"); 
+   }
+   // Dirección: DERECHA
+   else if(direccion == DERECHA){
       lcd.print("DERECHA");
-   } else if(direccion == IZQUIERDA){
+   } 
+   // Dirección: ABAJO DERECHA
+   else if(direccion == ABAJO_DERECHA){
+      lcd.print("ABAJO DERECHA");
+   } 
+   // Dirección: ABAJO
+   else if(direccion == ABAJO){
+      lcd.print("ABAJO");
+   } 
+   // Dirección: ABAJO IZQUIERDA
+   else if(direccion == ABAJO_IZQUIERDA){
+      lcd.print("ABAJO IZQUIERDA");
+   }
+   // Dirección: IZQUIERDA
+   else if(direccion == IZQUIERDA){
       lcd.print("IZQUIERDA");
-   } else if(direccion == CENTRO){
+   }
+   // Dirección: ARRIBA IZQUIERDA
+   else if(direccion == ARRIBA_IZQUIERDA){
+      lcd.print("ARRIBA IZQUIERDA");
+   } 
+   // Dirección: CENTRO
+   else if(direccion == CENTRO){
       lcd.print("CENTRO");
    }
 }
@@ -295,9 +383,9 @@ void mostrarDireccion(int direccion){
 void mostarMenuInicial(){
     lcd.clear();
     lcd.setCursor(0,0);
-    lcd.print("1 - JUEGO 1");
+    lcd.print("1 - DIRECCIONES");
     lcd.setCursor(0,1);
-    lcd.print("2 - JUEGO 2");
+    lcd.print("2 - CALCULAR");
 }
 
 // Nombre: mostrarPuntuacion
