@@ -1,7 +1,7 @@
 // Nombre: TFG_II_2020.ino 
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 10/05/2020
-// Versión: 1.3
+// Fecha: 21/06/2020
+// Versión: 2.0
 // Descripcion: Este fichero implementa un programa que define un sistema para 
 //              proporcionar herramientas de ayuda al tratamiento de la dislexia
 
@@ -16,13 +16,9 @@
 // Define los puntos para la orientacion
 #define CENTRO           0 
 #define ARRIBA           1
-#define ARRIBA_DERECHA   2
-#define DERECHA          3
-#define ABAJO_DERECHA    4
-#define ABAJO            5
-#define ABAJO_IZQUIERDA  6
-#define IZQUIERDA        7
-#define ARRIBA_IZQUIERDA 8
+#define DERECHA          2
+#define ABAJO            3
+#define IZQUIERDA        4
 
 // Define operaciones matemáticas
 #define SUMA            0
@@ -102,23 +98,25 @@ void loop(){
 
 // Nombre: juegoDispraxia
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 11/05/2020
-// Versión: 1.3
+// Fecha: 21/06/2020
+// Versión: 1.5
 // Descripcion: función que define el juego contra la dispraxia
 void juegoDispraxia(){
     ronda = 0;
+    // 10 rondas de juego
     while(ronda < 10){
         siguiente = false;
         acierto = false;
+        // Bucle para jugar
         while(!siguiente){
             // Genera una direccion aleatoria
             direccion = (int)((millis() * generarNumAleatorio(1, 10000)) % 5);
             mostrarDireccion(direccion);
             // Bucle mientras la respuesta no sea correcta
             while(!acierto){
-                pulsado = digitalRead(buttonJoy);
                 // Comprobamos la lectura del joystick
-                respuesta = obtenerDireccion(Xvalue, Yvalue, pulsado);
+                respuesta = obtenerDireccion();
+                // Si la respuesta coindice se suman puntos y avanza
                 if(respuesta == direccion){
                     delay(200);
                     lcd.clear();
@@ -134,6 +132,7 @@ void juegoDispraxia(){
             }
         }
     }
+    // Muestra la puntuación total acumulada
     mostrarPuntuacion();
 }
 
@@ -223,15 +222,19 @@ void juegoDiscalculia(){
             }
         }
     }
+    // Muesta la puntuación total acumulada
     mostrarPuntuacion();
 }
 
 // Nombre: obtenerDireccion
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 10/05/2020
-// Versión: 1.1
+// Fecha: 21/06/2020
+// Versión: 1.2
 // Descripcion: obtiene una dirección a partir de la lectura de la posición del joystick
-int obtenerDireccion(int Xvalue, int Yvalue, bool pulsado){
+int obtenerDireccion(){
+    int   Xvalue      = 0;
+    int   Yvalue      = 0;
+    int   direccion   = 0;
     // Lee la respuesta del joystick
     Xvalue = analogRead(pinJoyX);
     delay(100); // Pausa entre lecturas
@@ -239,25 +242,26 @@ int obtenerDireccion(int Xvalue, int Yvalue, bool pulsado){
     pulsado = digitalRead(buttonJoy);
 
     // Determina si el joystick apunta hacia arriba
-    if(Xvalue == 0 && Yvalue < 750 && Yvalue > 250){
+    if(Yvalue == 0 && Xvalue < 750 && Xvalue > 250){
         return ARRIBA;
     }
     // Determina si el joystick apunta hacia abajo
-    else if(Xvalue == 1023 && Yvalue < 750 && Yvalue > 250){
+    else if(Yvalue == 1023 && Xvalue < 750 && Xvalue > 250){
         return ABAJO;
     }
     // Determina si el joystick apunta hacia el lado derecho
-    else if(Yvalue == 0 && Xvalue < 750 && Xvalue > 250){
+    else if(Xvalue == 0 && Yvalue < 750 && Yvalue > 250){
         return DERECHA;
     }
     // Determina si el joystick apunta hacia el lado izquierdo
-    else if(Yvalue == 1023 && Xvalue < 750 && Xvalue > 250){
+    else if(Xvalue == 1023 && Yvalue < 750 && Yvalue > 250){
         return IZQUIERDA;
     } 
     // Determina si el joystick está centrado y pulsado
     else if(Xvalue < 520 && Xvalue > 500 && Yvalue < 520 && Yvalue > 500 && !pulsado){
         return CENTRO;
     }
+    // En otro caso devuelve -1 
     else{
         return -1;
     }
@@ -341,33 +345,17 @@ void mostrarDireccion(int direccion){
    if(direccion == ARRIBA){
       lcd.print("ARRIBA");
    }
-   // Dirección: ARRIBA DERECHA
-   else if(direccion == ARRIBA_DERECHA){
-      lcd.print("ARRIBA DERECHA"); 
-   }
    // Dirección: DERECHA
    else if(direccion == DERECHA){
       lcd.print("DERECHA");
-   } 
-   // Dirección: ABAJO DERECHA
-   else if(direccion == ABAJO_DERECHA){
-      lcd.print("ABAJO DERECHA");
    } 
    // Dirección: ABAJO
    else if(direccion == ABAJO){
       lcd.print("ABAJO");
    } 
-   // Dirección: ABAJO IZQUIERDA
-   else if(direccion == ABAJO_IZQUIERDA){
-      lcd.print("ABAJO IZQUIERDA");
-   }
    // Dirección: IZQUIERDA
    else if(direccion == IZQUIERDA){
       lcd.print("IZQUIERDA");
-   }
-   // Dirección: ARRIBA IZQUIERDA
-   else if(direccion == ARRIBA_IZQUIERDA){
-      lcd.print("ARRIBA IZQUIERDA");
    } 
    // Dirección: CENTRO
    else if(direccion == CENTRO){
@@ -400,6 +388,7 @@ void mostrarPuntuacion(){
     lcd.print(puntosTotal);
     delay(5000);
 }
+
 
 // Nombre: generarNumAleatorio
 // Autor: Jorge Navarro Ordoñez
