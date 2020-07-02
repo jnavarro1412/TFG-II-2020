@@ -160,8 +160,8 @@ void juegoDiscalculia(){
                 n1 = generarNumAleatorio(5, 25);
                 n2 = generarNumAleatorio(5, 25);
             } else if(operacion == RESTA){
-                n1 = generarNumAleatorio(20, 49);
-                n2 = generarNumAleatorio(10, 39);
+                n1 = generarNumAleatorio(21, 49);
+                n2 = generarNumAleatorio(1, 20);
             } else if(operacion == MULTIPLICACION){
                 n1 = generarNumAleatorio(1, 9);
                 n2 = generarNumAleatorio(1, 9);
@@ -228,8 +228,8 @@ void juegoDiscalculia(){
 
 // Nombre: obtenerDireccion
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 21/06/2020
-// Versión: 1.2
+// Fecha: 02/06/2020
+// Versión: 1.3
 // Descripcion: obtiene una dirección a partir de la lectura de la posición del joystick
 int obtenerDireccion(){
     int   Xvalue      = 0;
@@ -251,11 +251,11 @@ int obtenerDireccion(){
     }
     // Determina si el joystick apunta hacia el lado derecho
     else if(Xvalue == 0 && Yvalue < 750 && Yvalue > 250){
-        return DERECHA;
+        return IZQUIERDA;
     }
     // Determina si el joystick apunta hacia el lado izquierdo
     else if(Xvalue == 1023 && Yvalue < 750 && Yvalue > 250){
-        return IZQUIERDA;
+        return DERECHA;
     } 
     // Determina si el joystick está centrado y pulsado
     else if(Xvalue < 520 && Xvalue > 500 && Yvalue < 520 && Yvalue > 500 && !pulsado){
