@@ -1,9 +1,11 @@
 // Nombre: TFG_II_2020.ino 
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 21/06/2020
-// Versión: 2.0
-// Descripcion: Este fichero implementa un programa que define un sistema para 
-//              proporcionar herramientas de ayuda al tratamiento de la dislexia
+// Fecha: 05/07/2020
+// Versión: 3.0
+// Descripcion: Trabajo Final de Grado 
+// Universidad de Granada 2019/2020
+// Este fichero implementa un programa que define un sistema para 
+// proporcionar herramientas de ayuda al tratamiento de la dislexia
 
 // Bibliotecas incluidas en el proyecto
 #include <stdlib.h>
@@ -65,8 +67,8 @@ int   puntosTotal = 0;
 
 // Nombre: setup 
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 10/05/2020
-// Versión: 1.3
+// Fecha: 05/07/2020
+// Versión: 3.0
 // Descripcion: Configuración inicial de la tarjeta Arduino
 void setup(){
     // Configuración de columnas y filas del LCD 
@@ -79,9 +81,9 @@ void setup(){
 
 // Nombre: loop
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 10/05/2020
-// Versión: 1.2
-// Descripcion: Programa principal del sistema (se ejecuta infinitamente)
+// Fecha: 05/07/2020
+// Versión: 3.0
+// Descripcion: Programa principal del sistema (se ejecuta en bucle)
 void loop(){
     delay(3000);
     // Pantalla de inicio
@@ -98,9 +100,9 @@ void loop(){
 
 // Nombre: juegoDispraxia
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 21/06/2020
-// Versión: 1.5
-// Descripcion: función que define el juego contra la dispraxia
+// Fecha: 05/07/2020
+// Versión: 3.0
+// Descripcion: Función que define el juego contra la dispraxia
 void juegoDispraxia(){
     ronda = 0;
     // 10 rondas de juego
@@ -138,9 +140,9 @@ void juegoDispraxia(){
 
 // Nombre: juegoDiscalculia
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 24/05/2020
-// Versión: 1.4
-// Descripcion: función que define el juego contra la discalculia
+// Fecha: 05/07/2020
+// Versión: 3.0
+// Descripcion: Función que define el juego contra la discalculia
 void juegoDiscalculia(){
     ronda = 0;
     // 10 rondas de juego
@@ -152,6 +154,8 @@ void juegoDiscalculia(){
         while(!siguiente){
             int n1 = 0;
             int n2 = 0;
+            int indice = 0;
+            int num = 0;
             char respuesta[] = {""};
             // Genera una operacion matemática (Suma - Resta - Multiplicacion)
             int operacion = generarNumAleatorio(1, 10000) % 3;
@@ -167,58 +171,51 @@ void juegoDiscalculia(){
                 n2 = generarNumAleatorio(1, 9);
             }
             // Muestra la operación generada
-            mostrarOperacion(n1, n2, operacion);
+            indice = mostrarOperacion(n1, n2, operacion);
             // Calcula el resultado de la operacion
             int resultado = calcularOperacion(n1, n2, operacion);
             // Mientras no se acierta la respuesta
             while(!acierto){
-                // Lee dos números del teclado y los muestra por la pantalla LCD
-                respuesta[0] = teclado.waitForKey();
-                // Imprime la respuesta de la suma
-                if(operacion == SUMA || operacion == RESTA){
-                    lcd.setCursor(7,1);
-                    lcd.print(respuesta[0]);
-                    respuesta[1] = teclado.waitForKey();
-                    lcd.setCursor(8,1);
-                    lcd.print(respuesta[1]);
-                }
-                // Imprime la respuesta de la multiplicacion
-                else if(operacion == MULTIPLICACION){
-                    lcd.setCursor(5,1);
-                    lcd.print(respuesta[0]);
-                    respuesta[1] = teclado.waitForKey();
-                    lcd.setCursor(6,1);
-                    lcd.print(respuesta[1]);
-                }
+              lcd.setCursor(indice, 1);
+              if(resultado < 10){
                 // Convierte la respuesta en un numero entero
-                int num = String(respuesta).toInt();
-                // Comprueba si la respuesta coincide con la correcta
-                if(num == resultado){
-                    delay(500);
-                    lcd.clear();
-                    lcd.print("CORRECTO");
-                    lcd.setCursor(0,1);
-                    lcd.print("+");
-                    lcd.print(puntos);
-                    lcd.print(" PUNTOS");
-                    puntosTotal += puntos;
-                    acierto = true;
-                    siguiente = true;
-                    delay(1000);
-                    ronda++;
-                } else{
-                    delay(1000);
-                    // Limpia la pantalla para dejar espacio a la nueva respuesta
-                    if(operacion == SUMA || operacion == RESTA){
-                        lcd.setCursor(7,1);
-                    } else if(operacion == MULTIPLICACION){
-                        lcd.setCursor(5,1);
-                    }
-                    lcd.print("  ");
-                    if(puntos > 0){
-                        puntos -= 5;
-                    }
-                }
+                respuesta[0] = '0';
+                respuesta[1] = teclado.waitForKey();
+                lcd.print(respuesta[1]); 
+                num = String(respuesta).toInt();
+              } else if(resultado >= 10){
+                respuesta[0] = teclado.waitForKey();
+                lcd.setCursor(indice, 1);
+                lcd.print(respuesta[0]);
+                respuesta[1] = teclado.waitForKey();
+                lcd.setCursor((indice+1),1);
+                lcd.print(respuesta[1]);
+                // Convierte la respuesta en un numero entero
+                num = String(respuesta).toInt();
+              } 
+              // Comprueba si la respuesta coincide con la correcta
+              if(num == resultado){
+                delay(500);
+                lcd.clear();
+                lcd.print("CORRECTO");
+                lcd.setCursor(0,1);
+                lcd.print("+");
+                lcd.print(puntos);
+                lcd.print(" PUNTOS");
+                puntosTotal += puntos;
+                acierto = true;
+                siguiente = true;
+                delay(1000);
+                ronda++;
+              } else{
+                  delay(1000);
+                  // Limpia la pantalla para dejar espacio a la nueva respuesta
+                  lcd.setCursor(indice, 1);
+                  lcd.print("      ");
+                  if(puntos > 0){
+                    puntos -= 5;
+                  }
+               }
             }
         }
     }
@@ -228,13 +225,13 @@ void juegoDiscalculia(){
 
 // Nombre: obtenerDireccion
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 02/06/2020
-// Versión: 1.3
-// Descripcion: obtiene una dirección a partir de la lectura de la posición del joystick
+// Fecha: 05/07/2020
+// Versión: 3.0
+// Descripcion: Obtiene una dirección a partir de la lectura de la posición del joystick
 int obtenerDireccion(){
+    // Valores de los ejes
     int   Xvalue      = 0;
     int   Yvalue      = 0;
-    int   direccion   = 0;
     // Lee la respuesta del joystick
     Xvalue = analogRead(pinJoyX);
     delay(100); // Pausa entre lecturas
@@ -269,9 +266,9 @@ int obtenerDireccion(){
 
 // Nombre: calcularOperacion
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 24/05/2020
-// Versión: 1.1
-// Descripcion: calcula el resultado de la operacion generada
+// Fecha: 05/07/2020
+// Versión: 3.0
+// Descripcion: Calcula el resultado de la operacion generada
 int calcularOperacion(int op1, int op2, int operacion){
     // Calcula la suma
     if(operacion == SUMA){
@@ -293,49 +290,53 @@ int calcularOperacion(int op1, int op2, int operacion){
 
 // Nombre: mostrarOperacion
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 24/05/2020
-// Versión: 1.2
-// Descripcion: muestra por la pantalla LCD la operación generada
-void mostrarOperacion(int num1, int num2, int op){
+// Fecha: 05/07/2020
+// Versión: 3.0
+// Descripcion: Muestra por la pantalla LCD la operación generada y retorna el indice para la respuesta
+int mostrarOperacion(int num1, int num2, int op){
+    // Limpia la pantalla
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("CALCULAR");
     lcd.setCursor(0,1);
-    // Imprime las operaciones de suma y resta
+    // Imprime la operacion de suma
     if(op == SUMA || op == RESTA){
         lcd.print(num1);
-        lcd.setCursor(2,1);
-        // Símbolo de la suma
+        // Símbolo de la operacion
         if(op == SUMA){
-            lcd.print("+");
-        } 
-        // Símbolo de la resta
-        else if(op == RESTA){
-            lcd.print("-");
+          lcd.print("+");
+        } else if(op == RESTA){
+          lcd.print("-");
         }
-        lcd.setCursor(3,1);
         lcd.print(num2);
-        lcd.setCursor(5,1);
         lcd.print("=");
+        // Devuelve la posicion del cursor para la respuesta
+        if(num1 < 10 && num2 < 10){
+          return 4;
+        }
+        else if((num1 < 10 && num2 >= 10) || (num1 >= 10 && num2 < 10)){
+          return 5;
+        }
+        else if(num1 >=10 && num2 >= 10){
+          return 6; 
+        }
     }
     // Imprime la operacion de multiplicación
     else if(op == MULTIPLICACION){
         lcd.print(num1);
-        lcd.setCursor(1,1);
         // Símbolo de la multiplicación
         lcd.print("x");
-        lcd.setCursor(2,1);
         lcd.print(num2);
-        lcd.setCursor(4,1);
         lcd.print("=");
+        return 4;
     }
 }
 
 // Nombre: mostrarDireccion
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 24/05/2020
+// Fecha: 05/07/2020
 // Versión: 1.1
-// Descripcion: muestra por la pantalla LCD la direccion generada
+// Descripcion: Muestra por la pantalla LCD la direccion generada
 void mostrarDireccion(int direccion){
    lcd.clear();
    lcd.setCursor(0,0);
@@ -365,9 +366,9 @@ void mostrarDireccion(int direccion){
 
 // Nombre: mostrarMenuInicial
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 10/05/2020
-// Versión: 1.0
-// Descripcion: muestra el menú principal en la pantalla LCD
+// Fecha: 05/07/2020
+// Versión: 3.0
+// Descripcion: Muestra el menú principal en la pantalla LCD
 void mostarMenuInicial(){
     lcd.clear();
     lcd.setCursor(0,0);
@@ -378,9 +379,9 @@ void mostarMenuInicial(){
 
 // Nombre: mostrarPuntuacion
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 11/05/2020
-// Versión: 1.0
-// Descripcion: muestra la puntuación total de la partida
+// Fecha: 05/07/2020
+// Versión: 3.0
+// Descripcion: Muestra la puntuación total de la partida
 void mostrarPuntuacion(){
     lcd.clear();
     lcd.setCursor(0,0);
@@ -389,11 +390,10 @@ void mostrarPuntuacion(){
     delay(5000);
 }
 
-
 // Nombre: generarNumAleatorio
 // Autor: Jorge Navarro Ordoñez
-// Fecha: 15/03/2020
-// Versión: 1.0
+// Fecha: 05/07/2020
+// Versión: 3.0
 // Descripcion: genera un número aleatorio entre un rango inferior y superior
 int generarNumAleatorio(int Inf, int Sup){
     int num = 0;  
